@@ -17,7 +17,7 @@ login_manager = LoginManager(app)
 
 # Registrazione dei blueprint
 app.register_blueprint(auth_bp)  # Registrazione del Blueprint per l'autenticazione
-app.register_blueprint(routes_bp)  # Altri eventuali route
+app.register_blueprint(routes_bp)  # Altre route
 
 # Configurazione del login manager
 @login_manager.user_loader
