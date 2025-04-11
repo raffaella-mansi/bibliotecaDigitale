@@ -1,14 +1,14 @@
 import os
 from dotenv import load_dotenv
 import secrets
-from datetime import timedelta  # <-- AGGIUNGI QUESTA
+from datetime import timedelta
 
 load_dotenv()
 
 class Config:
     SECRET_KEY = os.getenv('SECRET_KEY', os.urandom(24))
     JWT_SECRET_KEY = os.getenv('JWT_SECRET') or secrets.token_hex(32)
-    JWT_ACCESS_TOKEN_EXPIRES = timedelta(seconds=10)  # <-- AGGIUNGI QUESTA
+    JWT_ACCESS_TOKEN_EXPIRES = timedelta(seconds=10) 
     SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     LDAP_URL = os.getenv('LDAP_URL')
