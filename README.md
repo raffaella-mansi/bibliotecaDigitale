@@ -2,7 +2,7 @@
 
 Il progetto consiste nella creazione di un'applicazione web per una biblioteca digitale che consente agli utenti di **caricare**, **scaricare** e **visualizzare** file PDF. Il sistema è protetto da un'autenticazione sicura tramite LDAP, con l'aggiunta di crittografia per garantire la protezione dei file. L'accesso alle risorse è strettamente controllato per evitare l'accesso non autorizzato ai documenti sensibili, proteggendo al contempo la privacy e la sicurezza degli utenti.
  
- [SCERMATA screen PROGETTO:](https://github.com/raffaella-mansi/bibliotecaDigitale/blob/main/immagini/dashboard.png)
+ ![dashboard](https://github.com/raffaella-mansi/bibliotecaDigitale/blob/main/immagini/dashboard.png)
 
  
 ## Tecnologie Utilizzate
@@ -301,7 +301,7 @@ Se la connessione ha successo e le credenziali sono corrette, l’utente viene c
 
 Questo meccanismo garantisce che solo utenti autorizzati e presenti nel sistema centrale possano accedere all'applicazione, migliorando il controllo e la sicurezza dell’accesso.
 
-[https://github.com/raffaella-mansi/bibliotecaDigitale/blob/main/immagini/login.png]
+![login](https://github.com/raffaella-mansi/bibliotecaDigitale/blob/main/immagini/login.png)
  
 Codice: **auth.py**
 ```sh
@@ -377,7 +377,7 @@ def decrypt_file(encrypted_data):
 **Sicurezza nelle richieste**
 
 La gestione della sessione utente è affidata alla libreria Flask-Login, che assicura un'esperienza sicura e protetta. Inoltre, è stato implementato un meccanismo per invalidare automaticamente il token JWT, garantendo che la sessione scada dopo un determinato periodo di tempo.
-[SCERMATA!!!!!!!!!!](https://github.com/raffaella-mansi/bibliotecaDigitale/blob/main/immagini/Sessione%20scaduta.png)
+![sessione_scaduta](https://github.com/raffaella-mansi/bibliotecaDigitale/blob/main/immagini/Sessione%20scaduta.png)
 
 **Protezione contro attacchi SQL Injection e xss**
 
@@ -405,7 +405,7 @@ Blocco account: Impediamo l'accesso se **account_locked** è vero, fino a sblocc
 
 Messaggi: Errore generico per login fallito, informazioni dettagliate solo per account bloccato
 
-SCERMATA!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+![blocco_utente](https://github.com/raffaella-mansi/bibliotecaDigitale/blob/main/immagini/Log%20di%20blocco%20utente.png)
 
 **Logout**
 
