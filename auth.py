@@ -42,7 +42,7 @@ def ldap_authenticate(username, password):
             logging.warning(f"❌ Utente '{username}' non trovato in LDAP.")
             return False
 
-        # Ora otteniamo il DN dell'utente trovato, che è l'entry_dn
+        # Otteniamo il DN dell'utente trovato, che è l'entry_dn
         user_dn = conn.entries[0].entry_dn  # Usa entry_dn per ottenere il DN completo
         logging.info(f"✅ Utente trovato in LDAP: {user_dn}")
 
