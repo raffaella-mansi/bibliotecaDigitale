@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body class="container mt-5">
+    <h1>Benvenuto!</h1>
+
+    <!-- Tasto Logout -->
+    <button id="logout-button" class="btn btn-danger mb-4">Logout</button>
+
+    <h2>Carica un file PDF</h2>
+    <form id="upload-form" enctype="multipart/form-data">
+        <input type="file" id="file" name="file" class="form-control mb-2" required>
+        <button type="submit" class="btn btn-success">Carica File</button>
+    </form>
+
+    <h3 class="mt-4">I tuoi file:</h3>
+    <ul id="file-list" class="list-group">
+        <li class="list-group-item">Caricamento...</li>
+    </ul>
+
+    <script>
+        const token = localStorage.getItem('access_token');
+        if (!token) {
+            window.location.href = '/';
+        }
+
+        // Aggiungi gestione del logout
+        document.getElementById('logout-button').addEventListener('click', function() {
+            localStorage.removeItem('access_token'); // Rimuovi il token di autenticazione
+            window.location.href = '/'; // Reindirizza alla pagina di login
+        });
+
+        // Carica lista file
+        fetch('/api/user-files', {
+            method: 'GET',
+            headers: {
+                'Authorization': 'Bearer ' + token
+            }
+        })
+        .then(res => {
+            if (!res.ok) throw new Error();
+            return res.json();
+        })
+        .then(data => {
+            document.querySelector('h1').textContent = `Benvenuto, ${data.username}!`;
+            const fileList = document.getElementById('file-list');
+            fileList.innerHTML = '';
+
+            if (data.files.length === 0) {
+                fileList.innerHTML = '<li class="list-group-item">Non hai ancora caricato nessun file.</li>';
+            } else {
+                data.files.forEach(file => {
+                    const li = document.createElement('li');
+                    li.className = 'list-group-item';
+                    li.textContent = file;
+
+                    // Aggiungi il link per visualizzare e scaricare il file
+                    const viewLink = document.createElement('a');
+                    viewLink.href = "#";
+                    viewLink.textContent = 'Visualizza';
+                    viewLink.className = 'btn btn-primary btn-sm mx-2';
+                    viewLink.onclick = () => viewFile(file);
+
+                    const downloadLink = document.createElement('a');
+                    downloadLink.href = "#";
+                    downloadLink.textContent = 'Download';
+                    downloadLink.className = 'btn btn-success btn-sm mx-2';
+                    downloadLink.onclick = () => downloadFile(file);
+
+                    // Aggiungi il tasto per eliminare il file
+                    const deleteLink = document.createElement('a');
+                    deleteLink.href = "#";
+                    deleteLink.textContent = 'Elimina';
+                    deleteLink.className = 'btn btn-danger btn-sm';
+                    deleteLink.onclick = () => deleteFile(file, li);
+
+                    li.appendChild(viewLink);
+                    li.appendChild(downloadLink);
+                    li.appendChild(deleteLink);
+
+                    fileList.appendChild(li);
+                });
+            }
+        })
+        .catch(() => {
+            alert('Sessione scaduta o non autorizzato. Fai login di nuovo.');
+            window.location.href = '/';
+        });
+
+        // Gestione upload file
+        document.getElementById('upload-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const fileInput = document.getElementById('file');
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+
+            fetch('/upload', {
+                method: 'POST',
+                headers: {
+                    'Authorization': 'Bearer ' + token
+                },
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert('File caricato con successo!');
+                window.location.reload();
+            })
+            .catch(error => {
+                console.error('Errore nell\'upload del file:', error);
+                alert('Errore nel caricamento del file.');
+            });
+        });
+
+        // Funzione per visualizzare un file PDF nel browser
+        function viewFile(filename) {
+            fetch(`/view/${filename}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': 'Bearer ' + token
+                }
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('File non trovato o sessione scaduta');
+                return response.blob();
+            })
+            .then(blob => {
+                const url = URL.createObjectURL(blob);
+                window.open(url, '_blank'); // Apre il file in una nuova finestra
+            })
+            .catch(error => {
+                console.error('Errore durante il recupero del file:', error);
+                alert('Errore nel recupero del file.');
+            });
+        }
+
+        // Funzione per scaricare il file PDF
+        function downloadFile(filename) {
+            fetch(`/download/${filename}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': 'Bearer ' + token
+                }
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('File non trovato o sessione scaduta');
+                return response.blob();
+            })
+            .then(blob => {
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = filename; // Imposta il nome del file per il download
+                link.click();
+            })
+            .catch(error => {
+                console.error('Errore durante il download del file:', error);
+                alert('Errore nel download del file.');
+            });
+        }
+
+        // Funzione per eliminare il file
+        function deleteFile(filename, fileElement) {
+            if (!confirm(`Sei sicuro di voler eliminare il file "${filename}"?`)) {
+                return;
+            }
+
+            fetch(`/delete/${filename}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': 'Bearer ' + token
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert('File eliminato con successo!');
+                    fileElement.remove(); // Rimuovi il file dalla lista
+                } else {
+                    throw new Error('Errore nell\'eliminazione del file');
+                }
+            })
+            .catch(error => {
+                console.error('Errore durante l\'eliminazione del file:', error);
+                alert('Errore nell\'eliminazione del file.');
+            });
+        }
+    </script>
+</body>
+</html>
+

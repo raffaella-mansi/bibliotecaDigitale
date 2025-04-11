@@ -1,0 +1,14 @@
+dn: uid=test2,ou=users,dc=library,dc=com
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+uid: test2
+sn: test2
+givenName: test2
+cn:  test2 test2
+displayName: test2 test2
+uidNumber: 10000
+gidNumber: 10000
+userPassword: {SSHA}IH/5RQsuP4C6/g7iug14Gnezfgkl/Ozo
+loginShell: /bin/bash
+homeDirectory: /home/test2
